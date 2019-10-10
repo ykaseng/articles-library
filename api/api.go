@@ -51,7 +51,7 @@ func New() (*chi.Mux, error) {
 	r.Group(func(r chi.Router) {
 		// r.Use(authResource.TokenAuth.Verifier())
 		// r.Use(jwt.Authenticator)
-		r.Mount("/api", appAPI.Router())
+		r.Mount("/api/v1", appAPI.Router())
 	})
 
 	return r, nil
