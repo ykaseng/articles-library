@@ -7,6 +7,7 @@ require (
 	github.com/go-ozzo/ozzo-validation v3.5.0+incompatible
 	github.com/go-pg/migrations v6.2.0+incompatible
 	github.com/go-pg/pg v7.1.5+incompatible
+	github.com/mitchellh/go-homedir v1.1.0
 	github.com/sirupsen/logrus v1.3.0
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.4.0
