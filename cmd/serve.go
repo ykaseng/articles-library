@@ -43,7 +43,7 @@ func init() {
 	rootCmd.AddCommand(serveCmd)
 
 	// Here you will define your flags and configuration settings.
-	viper.SetDefault("port", "localhost:8080")
+	viper.SetDefault("port", ":8080")
 	viper.SetDefault("log_level", "debug")
 
 	// Cobra supports Persistent Flags which will work for this command

@@ -5,9 +5,9 @@ import (
 	"github.com/go-ozzo/ozzo-validation"
 )
 
-// Article holds specific application settings linked to an Account.
+// Article holds specific application settings linked to an Article.
 type Article struct {
-	ID      int    `json:"-"`
+	ArticleID
 	Title   string `json:"title"`
 	Content string `json:"content"`
 	Author  string `json:"author"`
@@ -20,4 +20,8 @@ func (a *Article) Validate() error {
 		validation.Field(&a.Content, validation.Required),
 		validation.Field(&a.Author, validation.Required),
 	)
+}
+
+type ArticleID struct {
+	ID int `json:"id"`
 }
