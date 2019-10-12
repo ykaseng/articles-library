@@ -3,6 +3,7 @@ package app
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -17,9 +18,9 @@ var (
 
 // ArticleStore defines database operations for account.
 type ArticleStore interface {
-	Get(id int) (*models.Article, error)
+	Get(id int) (*[]models.Article, error)
 	GetAll() (*[]models.Article, error)
-	Post(*models.Article) (int, error)
+	Post(*models.Article) (*models.ArticleID, error)
 }
 
 // ArticleResource implements account management handler.
@@ -44,32 +45,71 @@ func (rs *ArticleResource) router() *chi.Mux {
 	return r
 }
 
-func (rs *ArticleResource) get(w http.ResponseWriter, r *http.Request) {
+type Status struct {
+	Status  int    `json:"status"`
+	Message string `json:"mesage"`
+}
 
+type getArticleResponse struct {
+	Status
+	Data *[]models.Article `json:"data"`
+}
+
+func (rs *ArticleResource) get(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "articleID"))
+	if err != nil {
+		render.Render(w, r, ErrBadRequest)
+		return
+	}
+
+	article, err := rs.Store.Get(id)
+	if err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
+
+	render.Respond(w, r, &getArticleResponse{
+		Status: Status{
+			Status: http.StatusOK,
+			Message: "SUCCESS",
+		},
+		Data: article,
+	})
+}
+
+type getAllArticlesResponse struct {
+	Status
+	Data *[]models.Article `json:"data"`
 }
 
 func (rs *ArticleResource) getAll(w http.ResponseWriter, r *http.Request) {
+	articles, err := rs.Store.GetAll()
+	if err != nil {
+		render.Render(w, r, ErrRender(err))
+		return
+	}
 
+	render.Respond(w, r, &getAllArticlesResponse{
+		Status: Status{
+			Status: http.StatusOK,
+			Message: "SUCCESS",
+		},
+		Data: articles,
+	})
 }
 
-type articleRequest struct {
-	*models.Article
-}
-
-func (a *articleRequest) Bind(r *http.Request) error {
+type postArticleRequest struct { *models.Article }
+func (a *postArticleRequest) Bind(r *http.Request) error {
 	return nil
 }
 
-type articleResponse struct {
-	Status  int    `json:"status"`
-	Message string `json:"mesage"`
-	Data    struct {
-		ID int `json:"id"`
-	} `json:"data,omitempty"`
+type postArticleResponse struct {
+	Status
+	Data *models.ArticleID `json:"data"`
 }
 
 func (rs *ArticleResource) post(w http.ResponseWriter, r *http.Request) {
-	data := &articleRequest{}
+	data := &postArticleRequest{}
 	if err := render.Bind(r, data); err != nil {
 		render.Render(w, r, ErrInvalidRequest(err))
 		return
@@ -81,13 +121,11 @@ func (rs *ArticleResource) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	render.Respond(w, r, &articleResponse{
-		Status:  http.StatusCreated,
-		Message: "SUCCESS",
-		Data: struct {
-			ID int `json:"id"`
-		}{
-			ID: articleID,
+	render.Respond(w, r, &postArticleResponse{
+		Status: Status{
+			Status:  http.StatusCreated,
+			Message: "SUCCESS",
 		},
+		Data: articleID,
 	})
 }

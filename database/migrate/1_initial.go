@@ -8,7 +8,7 @@ import (
 
 const authorsTable = `
 CREATE TABLE authors (
-	id INT,
+	id SERIAL,
 	name VARCHAR(255),
 	
 	PRIMARY KEY(id)
@@ -16,7 +16,7 @@ CREATE TABLE authors (
 
 const articlesTable = `
 CREATE TABLE articles (
-	id INT,
+	id SERIAL,
 	title TEXT,
 	content TEXT,
 	author_id INT,
