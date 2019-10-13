@@ -7,7 +7,7 @@ import (
 )
 
 const authorsTable = `
-CREATE TABLE authors (
+CREATE TABLE IF NOT EXISTS authors (
 	id SERIAL,
 	name VARCHAR(255),
 	
@@ -15,7 +15,7 @@ CREATE TABLE authors (
 )`
 
 const articlesTable = `
-CREATE TABLE articles (
+CREATE TABLE IF NOT EXISTS articles (
 	id SERIAL,
 	title TEXT,
 	content TEXT,
