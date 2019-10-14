@@ -6,7 +6,7 @@ import (
 	"github.com/ykaseng/articles-library/models"
 )
 
-// ArticleStore implements database operations for account management by user.
+// ArticleStore implements database operations for article management.
 type ArticleStore struct {
 	db *pg.DB
 }
