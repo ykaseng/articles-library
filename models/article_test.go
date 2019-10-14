@@ -20,10 +20,12 @@ func TestValidate(t *testing.T) {
 	}
 
 	for _, tc := range tt {
-		if err := tc.article.Validate(); err != nil {
-			if strings.Compare(tc.err, err.Error()) != 0 {
-				t.Errorf("validate of %v should be %v; got %v", tc.name, tc.err, err)
+		t.Run(tc.name, func(t *testing.T) {
+			if err := tc.article.Validate(); err != nil {
+				if strings.Compare(tc.err, err.Error()) != 0 {
+					t.Errorf("validate of %v should be %v; got %v", tc.name, tc.err, err)
+				}
 			}
-		}
+		})
 	}
 }
