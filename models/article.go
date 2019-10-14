@@ -18,7 +18,7 @@ func (a *Article) Validate() error {
 	return validation.ValidateStruct(a,
 		validation.Field(&a.Title, validation.Required),
 		validation.Field(&a.Content, validation.Required),
-		validation.Field(&a.Author, validation.Required),
+		validation.Field(&a.Author, validation.Required, validation.Length(5, 255)),
 	)
 }
 
