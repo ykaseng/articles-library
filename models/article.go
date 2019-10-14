@@ -2,7 +2,7 @@
 package models
 
 import (
-	"github.com/go-ozzo/ozzo-validation"
+	validation "github.com/go-ozzo/ozzo-validation"
 )
 
 // Article holds specific application settings linked to an Article.
@@ -22,6 +22,7 @@ func (a *Article) Validate() error {
 	)
 }
 
+// ArticleID holds specific application settings linked to an ArticleID.
 type ArticleID struct {
 	ID int `json:"id"`
 }
