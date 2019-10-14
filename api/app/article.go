@@ -13,7 +13,7 @@ import (
 
 // The list of error types returned from article resource.
 var (
-	ErrArticleValidation = errors.New("account validation error")
+	ErrEmptyRequest = errors.New("request cannot be empty")
 )
 
 // ArticleStore defines database operations for article.
@@ -45,85 +45,86 @@ func (rs *ArticleResource) router() *chi.Mux {
 	return r
 }
 
-type Status struct {
-	Status  int    `json:"status"`
-	Message string `json:"mesage"`
-}
-
-type getArticleResponse struct {
-	Status
-	Data *[]models.Article `json:"data"`
-}
-
 func (rs *ArticleResource) get(w http.ResponseWriter, r *http.Request) {
+	type getArticleResponse struct {
+		Status
+		Data *[]models.Article `json:"data"`
+	}
+
 	id, err := strconv.Atoi(chi.URLParam(r, "articleID"))
 	if err != nil {
-		render.Render(w, r, ErrBadRequest)
+		render.Render(w, r, ErrBadRequest(err))
 		return
 	}
 
 	article, err := rs.Store.Get(id)
 	if err != nil {
-		render.Render(w, r, ErrRender(err))
+		render.Render(w, r, ErrUnprocessableEntity(err))
 		return
 	}
 
 	render.Respond(w, r, &getArticleResponse{
 		Status: Status{
-			Status: http.StatusOK,
+			Code: http.StatusOK,
 			Message: "SUCCESS",
 		},
 		Data: article,
 	})
 }
 
-type getAllArticlesResponse struct {
-	Status
-	Data *[]models.Article `json:"data"`
-}
-
 func (rs *ArticleResource) getAll(w http.ResponseWriter, r *http.Request) {
+	type getAllArticlesResponse struct {
+		Status
+		Data *[]models.Article `json:"data"`
+	}
+
 	articles, err := rs.Store.GetAll()
 	if err != nil {
-		render.Render(w, r, ErrRender(err))
+		render.Render(w, r, ErrUnprocessableEntity(err))
 		return
 	}
 
 	render.Respond(w, r, &getAllArticlesResponse{
 		Status: Status{
-			Status: http.StatusOK,
+			Code: http.StatusOK,
 			Message: "SUCCESS",
 		},
 		Data: articles,
 	})
 }
 
-type postArticleRequest struct { *models.Article }
-func (a *postArticleRequest) Bind(r *http.Request) error {
-	return nil
-}
-
-type postArticleResponse struct {
-	Status
-	Data *models.ArticleID `json:"data"`
-}
-
 func (rs *ArticleResource) post(w http.ResponseWriter, r *http.Request) {
+	type postArticleRequest struct { *models.Article }
+	type postArticleResponse struct {
+		Status
+		Data *models.ArticleID `json:"data"`
+	}
+
 	data := &postArticleRequest{}
-	if err := render.Bind(r, data); err != nil {
-		render.Render(w, r, ErrInvalidRequest(err))
+	if err := render.DecodeJSON(r.Body, data); err != nil {
+		render.Render(w, r, ErrBadRequest(err))
 		return
+	}
+
+	if *data == (postArticleRequest{}) { 
+		render.Render(w, r, ErrBadRequest(ErrEmptyRequest)) 
+		return 
+	}
+	
+	if err := data.Validate(); err != nil { 
+		render.Render(w, r, ErrBadRequest(err)) 
+		return 
 	}
 
 	articleID, err := rs.Store.Post(data.Article)
 	if err != nil {
-		render.Render(w, r, ErrRender(err))
+		render.Render(w, r, ErrUnprocessableEntity(err))
 		return
 	}
 
 	render.Respond(w, r, &postArticleResponse{
 		Status: Status{
-			Status:  http.StatusCreated,
+			Code:  http.StatusCreated,
 			Message: "SUCCESS",
 		},
 		Data: articleID,
