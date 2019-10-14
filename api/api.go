@@ -4,7 +4,6 @@ package api
 import (
 	"time"
 
-	// _ "github.com/ykaseng/articles-library/auth/pwdless"
 	"github.com/ykaseng/articles-library/api/app"
 	"github.com/ykaseng/articles-library/database"
 	"github.com/ykaseng/articles-library/logging"
@@ -47,10 +46,7 @@ func New() (*chi.Mux, error) {
 	r.Use(logging.NewStructuredLogger(logger))
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
-	// r.Mount("/auth", authResource.Router())
 	r.Group(func(r chi.Router) {
-		// r.Use(authResource.TokenAuth.Verifier())
-		// r.Use(jwt.Authenticator)
 		r.Mount("/api/v1", appAPI.Router())
 	})
 

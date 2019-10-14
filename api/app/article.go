@@ -11,24 +11,24 @@ import (
 	"github.com/ykaseng/articles-library/models"
 )
 
-// The list of error types returned from account resource.
+// The list of error types returned from article resource.
 var (
 	ErrArticleValidation = errors.New("account validation error")
 )
 
-// ArticleStore defines database operations for account.
+// ArticleStore defines database operations for article.
 type ArticleStore interface {
 	Get(id int) (*[]models.Article, error)
 	GetAll() (*[]models.Article, error)
 	Post(*models.Article) (*models.ArticleID, error)
 }
 
-// ArticleResource implements account management handler.
+// ArticleResource implements article management handler.
 type ArticleResource struct {
 	Store ArticleStore
 }
 
-// NewArticleResource creates and returns an account resource.
+// NewArticleResource creates and returns an article resource.
 func NewArticleResource(store ArticleStore) *ArticleResource {
 	return &ArticleResource{
 		Store: store,
