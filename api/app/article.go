@@ -65,7 +65,7 @@ func (rs *ArticleResource) get(w http.ResponseWriter, r *http.Request) {
 
 	render.Respond(w, r, &getArticleResponse{
 		Status: Status{
-			Code: http.StatusOK,
+			Code:    http.StatusOK,
 			Message: "SUCCESS",
 		},
 		Data: article,
@@ -86,7 +86,7 @@ func (rs *ArticleResource) getAll(w http.ResponseWriter, r *http.Request) {
 
 	render.Respond(w, r, &getAllArticlesResponse{
 		Status: Status{
-			Code: http.StatusOK,
+			Code:    http.StatusOK,
 			Message: "SUCCESS",
 		},
 		Data: articles,
@@ -94,7 +94,7 @@ func (rs *ArticleResource) getAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (rs *ArticleResource) post(w http.ResponseWriter, r *http.Request) {
-	type postArticleRequest struct { *models.Article }
+	type postArticleRequest struct{ *models.Article }
 	type postArticleResponse struct {
 		Status
 		Data *models.ArticleID `json:"data"`
@@ -106,14 +106,14 @@ func (rs *ArticleResource) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if *data == (postArticleRequest{}) { 
-		render.Render(w, r, ErrBadRequest(ErrEmptyRequest)) 
-		return 
+	if *data == (postArticleRequest{}) {
+		render.Render(w, r, ErrBadRequest(ErrEmptyRequest))
+		return
 	}
-	
-	if err := data.Validate(); err != nil { 
-		render.Render(w, r, ErrBadRequest(err)) 
-		return 
+
+	if err := data.Validate(); err != nil {
+		render.Render(w, r, ErrBadRequest(err))
+		return
 	}
 
 	articleID, err := rs.Store.Post(data.Article)
@@ -124,7 +124,7 @@ func (rs *ArticleResource) post(w http.ResponseWriter, r *http.Request) {
 
 	render.Respond(w, r, &postArticleResponse{
 		Status: Status{
-			Code:  http.StatusCreated,
+			Code:    http.StatusCreated,
 			Message: "SUCCESS",
 		},
 		Data: articleID,
