@@ -11,7 +11,6 @@ import (
 
 // DBConn returns a postgres connection pool.
 func DBConn() (*pg.DB, error) {
-
 	opts, err := pg.ParseURL(viper.GetString("database_dsn"))
 	if err != nil {
 		return nil, err
