@@ -12,13 +12,6 @@ import (
 	"github.com/ykaseng/articles-library/logging"
 )
 
-type ctxKey int
-
-const (
-	ctxAccount ctxKey = iota
-	ctxProfile
-)
-
 // API provides application resources and handlers.
 type API struct {
 	Article *ArticleResource

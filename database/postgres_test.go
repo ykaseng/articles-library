@@ -68,8 +68,6 @@ func TestDBConn(t *testing.T) {
 	}
 }
 
-func TestCheckConn(t *testing.T) {}
-
 func resetEnv() {
 	viper.SetDefault("database_dsn", fmt.Sprintf("%s://%s:%s@%s:%d/%s?sslmode=%s", viper.GetString("DATABASE_URI_SCHEME"), viper.GetString("DATABASE_USER"), viper.GetString("DATABASE_PASSWORD"), viper.GetString("DATABASE_HOST"), viper.GetInt("DATABASE_PORT"), viper.GetString("DATABASE_NAME"), viper.GetString("DATABASE_SSL")))
 }
