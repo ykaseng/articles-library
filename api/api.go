@@ -48,7 +48,7 @@ func New() (*chi.Mux, error) {
 	r.NotFound(app.NotFoundHandler())
 
 	r.Group(func(r chi.Router) {
-		r.Mount("/api/v1", appAPI.Router())
+		r.Mount("/", appAPI.Router())
 	})
 
 	return r, nil

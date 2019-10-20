@@ -17,7 +17,7 @@ func TestValidate(t *testing.T) {
 		{"article missing author field", &Article{Title: "TestTitle", Content: "TestContent"}, "author: cannot be blank."},
 		{"article missing multiple fields", &Article{Title: "TestTitle"}, "author: cannot be blank; content: cannot be blank."},
 		{"article missing all fields", &Article{}, "author: cannot be blank; content: cannot be blank; title: cannot be blank."},
-		{"article invalid author field", &Article{Title: "TestTitle", Content: "TestContent", Author: "Test"}, "author: the length must be between 5 and 255."},
+		{"article invalid author field", &Article{Title: "TestTitle", Content: "TestContent", Author: "Test"}, "author: the length must be between 1 and 255."},
 	}
 
 	for _, tc := range tt {
