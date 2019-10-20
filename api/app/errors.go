@@ -22,8 +22,8 @@ func (e *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
 func ErrBadRequest(err error) render.Renderer {
 	return &ErrResponse{
 		Status: Status{
-			Code:		http.StatusBadRequest,
-			Message:	err.Error(),
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
 		},
 	}
 }
@@ -32,8 +32,8 @@ func ErrBadRequest(err error) render.Renderer {
 func ErrUnprocessableEntity(err error) render.Renderer {
 	return &ErrResponse{
 		Status: Status{
-			Code:		http.StatusUnprocessableEntity,
-			Message:	err.Error(),
+			Code:    http.StatusUnprocessableEntity,
+			Message: err.Error(),
 		},
 	}
 }

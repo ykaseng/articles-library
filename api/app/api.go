@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/go-pg/pg"
+	"github.com/go-pg/pg/orm"
 	"github.com/sirupsen/logrus"
 
 	"github.com/ykaseng/articles-library/database"
@@ -18,7 +18,7 @@ type API struct {
 }
 
 // NewAPI configures and returns application API.
-func NewAPI(db *pg.DB) (*API, error) {
+func NewAPI(db orm.DB) (*API, error) {
 	articleStore := database.NewArticleStore(db)
 	article := NewArticleResource(articleStore)
 

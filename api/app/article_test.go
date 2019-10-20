@@ -1,6 +1,7 @@
 package app
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -321,6 +322,101 @@ func TestGet(t *testing.T) {
 			assert.Equal(t, tc.expected.Code, actual.Code)
 			assert.Equal(t, tc.expected.Message, actual.Message)
 			assert.Equal(t, tc.expected.Data, actual.Data)
+		})
+	}
+}
+
+func TestPost(t *testing.T) {
+	type postArticleResponse struct {
+		Status
+		Data models.ArticleID `json:"data"`
+	}
+
+	tt := []struct {
+		name     string
+		seed     models.Article
+		expected struct {
+			resp    postArticleResponse
+			article models.Article
+		}
+	}{
+		{
+			name: "post record",
+			seed: models.Article{
+				Title:   "Test Title",
+				Author:  "Test Author",
+				Content: "Test Content",
+			},
+			expected: struct {
+				resp    postArticleResponse
+				article models.Article
+			}{
+				resp: postArticleResponse{
+					Status: Status{
+						Code:    http.StatusCreated,
+						Message: "SUCCESS",
+					},
+					Data: models.ArticleID{ID: 1},
+				},
+				article: models.Article{
+					ArticleID: models.ArticleID{ID: 1},
+					Title:     "Test Title",
+					Author:    "Test Author",
+					Content:   "Test Content",
+				},
+			},
+		},
+	}
+
+	db, err := database.DBConn()
+	if err != nil {
+		t.Fatalf("open database connection: %v", err)
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			tx, err := db.Begin()
+			if err != nil {
+				t.Errorf("failed to begin transaction: %v", err)
+			}
+
+			defer func() {
+				tx.Rollback()
+				restartSerial(t, db)
+			}()
+
+			article := NewArticleResource(database.NewArticleStore(tx))
+
+			reqBody, err := json.Marshal(tc.seed)
+			if err != nil {
+				t.Errorf("marshal seed failed: %v", err)
+			}
+
+			req, err := http.NewRequest("POST", "localhost:8080/api/v1/articles", bytes.NewBuffer(reqBody))
+			if err != nil {
+				t.Errorf("create request failed: %v", err)
+			}
+
+			rec := httptest.NewRecorder()
+			article.post(rec, req)
+			res := rec.Result()
+			b, err := ioutil.ReadAll(res.Body)
+			if err != nil {
+				t.Errorf("read response failed: %v", err)
+			}
+
+			var actual postArticleResponse
+			if err := json.Unmarshal(b, &actual); err != nil {
+				t.Errorf("unmarshal response failed: %v", err)
+			}
+
+			actualArticle, err := article.Store.Get(actual.Data.ID)
+			if err != nil {
+				t.Errorf("failed to retrieve article: %v", err)
+			}
+
+			assert.Equal(t, tc.expected.resp, actual)
+			assert.Equal(t, []models.Article{tc.expected.article}, *actualArticle)
 		})
 	}
 }
