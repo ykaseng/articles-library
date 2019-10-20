@@ -32,6 +32,7 @@ func NewAPI(db orm.DB) (*API, error) {
 // Router provides application routes.
 func (a *API) Router() *chi.Mux {
 	r := chi.NewRouter()
+	r.NotFound(NotFoundHandler())
 
 	r.Mount("/articles", a.Article.router())
 

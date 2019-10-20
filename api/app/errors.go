@@ -38,6 +38,13 @@ func ErrUnprocessableEntity(err error) render.Renderer {
 	}
 }
 
+// NotFoundHandler handles 404 requests
+func NotFoundHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		render.Render(w, r, ErrNotFound)
+	}
+}
+
 var (
 	// ErrUnauthorized returns 401 Unauthorized.
 	ErrUnauthorized = &ErrResponse{Status: Status{Code: http.StatusUnauthorized, Message: http.StatusText(http.StatusUnauthorized)}}

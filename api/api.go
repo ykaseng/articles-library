@@ -45,6 +45,7 @@ func New() (*chi.Mux, error) {
 
 	r.Use(logging.NewStructuredLogger(logger))
 	r.Use(render.SetContentType(render.ContentTypeJSON))
+	r.NotFound(app.NotFoundHandler())
 
 	r.Group(func(r chi.Router) {
 		r.Mount("/api/v1", appAPI.Router())

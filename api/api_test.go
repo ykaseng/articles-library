@@ -1,4 +1,4 @@
-package app
+package api
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ import (
 
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
-	"github.com/ykaseng/articles-library/database"
+	"github.com/ykaseng/articles-library/api/app"
 	"github.com/ykaseng/articles-library/models"
 )
 
@@ -23,7 +23,7 @@ func init() {
 
 func TestRouter(t *testing.T) {
 	type getAllArticlesResponse struct {
-		Status
+		app.Status
 		Data []models.Article `json:"data"`
 	}
 
@@ -36,9 +36,9 @@ func TestRouter(t *testing.T) {
 		{
 			name:     "correct endpoint",
 			method:   "GET",
-			endpoint: "/articles",
+			endpoint: "/api/v1/articles",
 			expected: getAllArticlesResponse{
-				Status: Status{
+				Status: app.Status{
 					Code:    http.StatusOK,
 					Message: "SUCCESS",
 				},
@@ -46,11 +46,23 @@ func TestRouter(t *testing.T) {
 			},
 		},
 		{
+			name:     "invalid top level endpoint",
+			method:   "GET",
+			endpoint: "/api/v2/articles",
+			expected: getAllArticlesResponse{
+				Status: app.Status{
+					Code:    http.StatusNotFound,
+					Message: http.StatusText(http.StatusNotFound),
+				},
+				Data: []models.Article(nil),
+			},
+		},
+		{
 			name:     "invalid endpoint",
 			method:   "GET",
-			endpoint: "/artichokes",
+			endpoint: "/api/v1/artichokes",
 			expected: getAllArticlesResponse{
-				Status: Status{
+				Status: app.Status{
 					Code:    http.StatusNotFound,
 					Message: http.StatusText(http.StatusNotFound),
 				},
@@ -59,19 +71,14 @@ func TestRouter(t *testing.T) {
 		},
 	}
 
-	db, err := database.DBConn()
-	if err != nil {
-		t.Fatalf("open database connection: %v", err)
-	}
-
 	for _, tc := range tt {
 		t.Run(tc.name, func(t *testing.T) {
-			api, err := NewAPI(db)
+			api, err := New()
 			if err != nil {
 				t.Errorf("failed to create api : %v", err)
 			}
 
-			srv := httptest.NewServer(api.Router())
+			srv := httptest.NewServer(api)
 			defer srv.Close()
 
 			res := testRequest(t, srv, tc.method, tc.endpoint, nil)
