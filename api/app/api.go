@@ -5,18 +5,11 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/go-pg/pg"
+	"github.com/go-pg/pg/orm"
 	"github.com/sirupsen/logrus"
 
 	"github.com/ykaseng/articles-library/database"
 	"github.com/ykaseng/articles-library/logging"
-)
-
-type ctxKey int
-
-const (
-	ctxAccount ctxKey = iota
-	ctxProfile
 )
 
 // API provides application resources and handlers.
@@ -25,7 +18,7 @@ type API struct {
 }
 
 // NewAPI configures and returns application API.
-func NewAPI(db *pg.DB) (*API, error) {
+func NewAPI(db orm.DB) (*API, error) {
 	articleStore := database.NewArticleStore(db)
 	article := NewArticleResource(articleStore)
 
@@ -39,6 +32,7 @@ func NewAPI(db *pg.DB) (*API, error) {
 // Router provides application routes.
 func (a *API) Router() *chi.Mux {
 	r := chi.NewRouter()
+	r.NotFound(NotFoundHandler())
 
 	r.Mount("/articles", a.Article.router())
 

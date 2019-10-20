@@ -13,4 +13,4 @@ test_db:
 	docker run --name test_db --rm -it -p 5432:5432 --env POSTGRES_USER=postgres --env POSTGRES_PASSWORD=r17BDyxd3rJmF9NIlGZP --env POSTGRES_DB=library postgres:latest
 
 test_coverage:
-	go test -timeout 30s github.com/ykaseng/articles-library/database -coverprofile=C:\Users\myhkaya\AppData\Local\Temp\vscode-gouP2GgF\go-code-cover
+	DATABASE_URI_SCHEME=postgres DATABASE_USER=postgres DATABASE_PASSWORD=r17BDyxd3rJmF9NIlGZP DATABASE_HOST=localhost DATABASE_PORT=5432 DATABASE_NAME=library DATABASE_SSL=disable go test -timeout 30s github.com/ykaseng/articles-library/database -coverprofile=C:\Users\myhkaya\AppData\Local\Temp\vscode-gouP2GgF\go-code-cover

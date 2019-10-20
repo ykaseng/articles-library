@@ -13,7 +13,7 @@ type ArticleStore struct {
 }
 
 // NewArticleStore returns an ArticleStore.
-func NewArticleStore(db *pg.DB) *ArticleStore {
+func NewArticleStore(db orm.DB) *ArticleStore {
 	return &ArticleStore{
 		db: db,
 	}
