@@ -36,7 +36,7 @@ func TestRouter(t *testing.T) {
 		{
 			name:     "correct endpoint",
 			method:   "GET",
-			endpoint: "/api/v1/articles",
+			endpoint: "/articles",
 			expected: getAllArticlesResponse{
 				Status: app.Status{
 					Code:    http.StatusOK,
@@ -46,21 +46,9 @@ func TestRouter(t *testing.T) {
 			},
 		},
 		{
-			name:     "invalid top level endpoint",
-			method:   "GET",
-			endpoint: "/api/v2/articles",
-			expected: getAllArticlesResponse{
-				Status: app.Status{
-					Code:    http.StatusNotFound,
-					Message: http.StatusText(http.StatusNotFound),
-				},
-				Data: []models.Article(nil),
-			},
-		},
-		{
 			name:     "invalid endpoint",
 			method:   "GET",
-			endpoint: "/api/v1/artichokes",
+			endpoint: "/artichokes",
 			expected: getAllArticlesResponse{
 				Status: app.Status{
 					Code:    http.StatusNotFound,
